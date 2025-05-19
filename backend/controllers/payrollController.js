@@ -25,17 +25,18 @@ exports.generatePayroll = async (req, res) => {
     const end = start.clone().endOf('month');
     const allDates = [];
 
+    const today = moment().endOf('day'); // get today as latest allowed date
+
     for (let date = start.clone(); date.isSameOrBefore(end); date.add(1, 'day')) {
+      if (date.isAfter(today)) break; // skip future dates
       if (![0, 6].includes(date.day())) {
         allDates.push(date.clone());
       }
     }
-
+    console.log('employeeId')
     const attendanceRecords = await Attendance.find({
-      user: employeeId,
-      date: { $gte: start.toDate(), $lte: end.toDate() },
+      userId: employeeId,
     });
-
     const attendanceMap = {};
     attendanceRecords.forEach((rec) => {
       const key = moment(rec.date).format('YYYY-MM-DD');
@@ -48,7 +49,6 @@ exports.generatePayroll = async (req, res) => {
     allDates.forEach((date) => {
       const key = date.format('YYYY-MM-DD');
       const status = attendanceMap[key];
-
       if (status === 'Present') present++;
       else if (status === 'Leave') leave++;
       else absent++;
@@ -87,11 +87,14 @@ exports.generateAllPayroll = async (req, res) => {
 
     // Weekdays in the month (Mon-Fri)
     const workingDays = [];
+    const today = moment().endOf('day'); // get today as latest allowed date
     for (let date = start.clone(); date.isSameOrBefore(end); date.add(1, 'day')) {
+      if (date.isAfter(today)) break; // skip future dates
       if (![0, 6].includes(date.day())) {
         workingDays.push(date.clone());
       }
     }
+
 
     const users = await User.find({ status: "approved" });
 
@@ -99,8 +102,8 @@ exports.generateAllPayroll = async (req, res) => {
 
     for (const user of users) {
       const attendanceRecords = await Attendance.find({
-        user: user._id,
-        date: { $gte: start.toDate(), $lte: end.toDate() },
+        userId: user._id,
+        // date: { $gte: start.toDate(), $lte: end.toDate() },
       });
 
       const attendanceMap = {};
@@ -108,6 +111,8 @@ exports.generateAllPayroll = async (req, res) => {
         const key = moment(rec.date).format("YYYY-MM-DD");
         attendanceMap[key] = rec.status;
       });
+    console.log('attendanceRecords', attendanceRecords)
+      console.log('attendanceMap', attendanceMap)
 
       let present = 0, leave = 0, absent = 0;
       const detailedRecords = [];

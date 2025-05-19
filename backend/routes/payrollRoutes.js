@@ -8,7 +8,8 @@ const {
   generateAllPayroll
 } = require("../controllers/payrollController");
 
-router.post("/generate", protect, isAdmin, generatePayroll);
+// isAdmin,
+router.post("/generate", protect,  generatePayroll);
 router.post("/generate-all", protect, isAdmin, generateAllPayroll);
 router.get("/me", protect, getMyPayroll);
 router.get("/all", protect, isAdmin, getAllPayroll);

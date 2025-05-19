@@ -25,9 +25,9 @@ function ProtectedRoute({ children, adminOnly = false }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ProtectedRoute.useEffect": ()=>{
             if (!loading) {
-                console.log('i am user', user);
-                console.log('i am user', user.role);
-                console.log('i am user', adminOnly);
+                // console.log('i am user',user)
+                // console.log('i am user',user.role)
+                // console.log('i am user',adminOnly)
                 if (!user) {
                     router.push('/login');
                 } else if (adminOnly && user?.user?.role != 'admin') {

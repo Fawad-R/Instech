@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const { register, handleSubmit } = useForm();
@@ -10,13 +11,18 @@ const LoginPage = () => {
   const router = useRouter();
 
   const onSubmit = async (data) => {
-    try {
-      await login(data);
-      router.push('/dashboard');
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  try {
+    const res = await login(data); // assuming login() returns the axios response
+    toast.success(res?.message || 'Login successful!');
+    router.push('/dashboard');
+  } catch (err) {
+    console.error(err);
+
+    // Extract the error message from the response or default to "Login failed"
+    const errorMessage = err?.response?.data?.message || 'Login failed';
+    toast.error(errorMessage);
+  }
+};
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

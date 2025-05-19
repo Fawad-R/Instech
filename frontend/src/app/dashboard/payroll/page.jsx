@@ -26,7 +26,7 @@ export default function PayrollPage() {
           withCredentials: true
         }
       );
-
+      console.log('payroll data:',res.data)
       setPayroll(res.data);
     } catch (err) {
       console.error('Failed to fetch payroll:', err);

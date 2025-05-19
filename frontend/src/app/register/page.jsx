@@ -3,20 +3,22 @@
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
   const { register, handleSubmit } = useForm();
   const router = useRouter();
 
   const onSubmit = async (data) => {
-    try {
-      await axios.post(`http://localhost:5000/api/auth/register`, data);
-      router.push('/login');
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+  try {
+    const res = await axios.post(`http://localhost:5000/api/auth/register`, data);
+    toast.success(res.data.message || 'Registration successful!');
+    router.push('/login');
+  } catch (err) {
+    console.error(err);
+    toast.error(err.response?.data?.message || 'Registration failed');
+  }
+};
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white shadow-md p-8 rounded-md w-full max-w-md">
